@@ -38,11 +38,11 @@ def bin_vehicle_usage(vehicles, data, df_time):
     binned = []
     for vehicle in vehicles:
         data_for_vehicle = data.where(data[Col.VEHICLE] == vehicle).drop(columns=[Col.DISTANCE, Col.VEHICLE]).dropna()
-        binned.append(df_time.merge(data_for_vehicle[['row_n', Col.WEEKDAY]]).groupby([Col.WEEKDAY, 'Tid'])["Datum"].apply('count').to_frame().rename(columns={"Datum": vehicle}))
+        binned.append(df_time.merge(data_for_vehicle[['row_n', Col.WEEKDAY]]).groupby([Col.WEEKDAY, 'Tid'])["Datum"].count().to_frame().rename(columns={"Datum": vehicle}))
 
     binned_all = binned[0]
     if len(binned) > 1:
         binned_all = binned_all.join(binned[1:], how='outer')
         binned_all.fillna(0, inplace=True)
-    
+
     return binned_all
