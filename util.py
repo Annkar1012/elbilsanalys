@@ -19,8 +19,8 @@ def longest_typical_driving_distance(distance_per_vehicle_per_day: pd.DataFrame)
         driving_days = sorted_distance.count()
         days_to_count = [math.ceil(d) for d in driving_days * PERCENTILES]
         max_distance = [sorted_distance[-index] for index in days_to_count]
-        max_distances.at[vehicle] = max_distance
-        skipped_days.at[vehicle] = [sorted_distance.size - d for d in days_to_count]
+        max_distances.loc[vehicle] = max_distance
+        skipped_days.loc[vehicle] = [sorted_distance.size - d for d in days_to_count]
     return max_distances, skipped_days
 
 def calculate_recommended_battery_capacity(driving_distance: pd.Series):
