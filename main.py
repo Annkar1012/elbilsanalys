@@ -8,14 +8,13 @@ import plots
 import util
 from defs import Col, FILTER, TIME_BINS, WEEKDAYS, COLORSCHEME
 
-data = pd.read_csv("data/raw2.csv", delimiter=";", decimal=',', usecols=FILTER)
+data = pd.read_csv("data/example.csv", delimiter=";", decimal=',', usecols=FILTER)
 
 data['row_n'] = range(len(data))
 data[Col.START_TIME] = pd.to_datetime(data[Col.START_DATE] + ' ' + data[Col.START_TIME])
 data[Col.END_TIME] = pd.to_datetime(data[Col.END_DATE] + ' ' + data[Col.END_TIME])
 data[Col.WEEKDAY] = pd.DatetimeIndex(data[Col.START_DATE]).weekday # Monday == 0
 data["Duration"] = data[Col.END_TIME] - data[Col.START_TIME]
-
 
 
 n_vehicles, distance_per_vehicle_per_day = util.pivot_to_distance_per_vehicle_per_day(data)
@@ -54,6 +53,6 @@ colormap = matplotlib.cm.ScalarMappable(norm=norm, cmap=COLORSCHEME)
 for ax, vehicle in zip(axs[:, 0], binned_all):
     plots.plot_usage_heatmap(ax, binned_all[[vehicle]], tick_formatter, colormap)
 
-fig.colorbar(colormap, location="bottom")
+fig.colorbar(colormap, location="bottom", ax=axs[-1])
 
 plt.show()
