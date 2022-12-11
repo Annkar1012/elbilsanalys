@@ -6,7 +6,7 @@ DEPTH_OF_DISCHARGE = 0.7
 PERCENTILES = np.array([1, 0.98, 0.95])
 
 TIME_BINS = "10T" # 10 minutes
-COLORSCHEME = matplotlib.cm.Paired
+COLORSCHEME = matplotlib.cm.BuPu
 
 WEEKDAYS = ['Må', 'Ti', 'On', 'To', 'Fr', 'Lö', 'Sö']
 
