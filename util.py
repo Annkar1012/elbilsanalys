@@ -1,9 +1,19 @@
 import math
 import pandas as pd
 import numpy as np
+import tkinter as tk
+import tkinter.filedialog
+import os
 
 from defs import Col, PERCENTILES, HIGH_ENERGY_CONSUMPTION, DEPTH_OF_DISCHARGE, TIME_BINS
 
+def ask_file():
+    tkroot = tk.Tk()
+    tkroot.withdraw()
+    tkroot.wm_attributes('-topmost', 1)
+
+    homedir = os.path.expanduser('~')
+    return tk.filedialog.askopenfilename(initialdir=homedir, title="Choose a file", filetypes=[("CSV", "*.csv")])
 
 def pivot_to_distance_per_vehicle_per_day(data):
     # Skapa pivottabell med fordon som kolumner, datum som radindex och körsträcka som fält

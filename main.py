@@ -3,12 +3,16 @@ import matplotlib.dates
 import matplotlib.cm
 import numpy as np
 import pandas as pd
-import plots
 
+import plots
 import util
 from defs import Col, FILTER, TIME_BINS, WEEKDAYS, COLORSCHEME
 
-data = pd.read_csv("data/example.csv", delimiter=";", decimal=',', usecols=FILTER)
+try:
+    file = util.ask_file()
+    data = pd.read_csv(file, delimiter=";", decimal=',', usecols=FILTER)
+except FileNotFoundError:
+    exit(0)
 
 data['row_n'] = range(len(data))
 data[Col.START_TIME] = pd.to_datetime(data[Col.START_DATE] + ' ' + data[Col.START_TIME])
