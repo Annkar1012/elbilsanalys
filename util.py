@@ -1,9 +1,19 @@
 import math
 import pandas as pd
 import numpy as np
+import tkinter as tk
+import tkinter.filedialog
+import os
 
 from defs import Col, PERCENTILES, HIGH_ENERGY_CONSUMPTION, DEPTH_OF_DISCHARGE, TIME_BINS
 
+def ask_file():
+    tkroot = tk.Tk()
+    tkroot.withdraw()
+    tkroot.wm_attributes('-topmost', 1)
+
+    homedir = os.path.expanduser('~')
+    return tk.filedialog.askopenfilename(initialdir=homedir, title="Choose a file", filetypes=[("CSV", "*.csv")])
 
 def pivot_to_distance_per_vehicle_per_day(data):
     # Skapa pivottabell med fordon som kolumner, datum som radindex och körsträcka som fält
@@ -19,8 +29,8 @@ def longest_typical_driving_distance(distance_per_vehicle_per_day: pd.DataFrame)
         driving_days = sorted_distance.count()
         days_to_count = [math.ceil(d) for d in driving_days * PERCENTILES]
         max_distance = [sorted_distance[-index] for index in days_to_count]
-        max_distances.at[vehicle] = max_distance
-        skipped_days.at[vehicle] = [sorted_distance.size - d for d in days_to_count]
+        max_distances.loc[vehicle] = max_distance
+        skipped_days.loc[vehicle] = [sorted_distance.size - d for d in days_to_count]
     return max_distances, skipped_days
 
 def calculate_recommended_battery_capacity(driving_distance: pd.Series):
@@ -38,11 +48,11 @@ def bin_vehicle_usage(vehicles, data, df_time):
     binned = []
     for vehicle in vehicles:
         data_for_vehicle = data.where(data[Col.VEHICLE] == vehicle).drop(columns=[Col.DISTANCE, Col.VEHICLE]).dropna()
-        binned.append(df_time.merge(data_for_vehicle[['row_n', Col.WEEKDAY]]).groupby([Col.WEEKDAY, 'Tid'])["Datum"].apply('count').to_frame().rename(columns={"Datum": vehicle}))
+        binned.append(df_time.merge(data_for_vehicle[['row_n', Col.WEEKDAY]]).groupby([Col.WEEKDAY, 'Tid'])["Datum"].count().to_frame().rename(columns={"Datum": vehicle}))
 
     binned_all = binned[0]
     if len(binned) > 1:
         binned_all = binned_all.join(binned[1:], how='outer')
         binned_all.fillna(0, inplace=True)
-    
+
     return binned_all
