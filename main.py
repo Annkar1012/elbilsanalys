@@ -3,6 +3,7 @@ import matplotlib.dates
 import matplotlib.cm
 import numpy as np
 import pandas as pd
+import sys
 
 import plots
 import util
@@ -12,7 +13,7 @@ try:
     file = util.ask_file()
     data = pd.read_csv(file, delimiter=";", decimal=',', usecols=FILTER)
 except FileNotFoundError:
-    exit(0)
+    sys.exit(0)
 
 data['row_n'] = range(len(data))
 data[Col.START_TIME] = pd.to_datetime(data[Col.START_DATE] + ' ' + data[Col.START_TIME])
